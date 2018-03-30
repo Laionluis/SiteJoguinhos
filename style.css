@@ -1,0 +1,58 @@
+.navbar {
+	background-color: transparent;
+	background: transparent;
+	border-color: transparent;
+}
+
+.navbar li {color: #000000;}
+
+.banner {
+	height: 1024px;
+	background: url('img/Tumblr-Backgrounds-7.jpg');
+}
+
+#footer {
+   position:fixed;
+   left:0px;
+   bottom:0px;
+   height:30px;
+   width:100%;
+   background:transparent;
+}
+
+.menu-esquerda {
+	width: 200px;
+	float: left;
+	position: relative;
+	padding: 5px 25px 22px 50px;
+	margin: 24px 25px 0 0;
+}
+
+.menu-esquerda > ul {
+	padding: 20px 20px 20px 22px;
+}
+
+a.buttons {
+  color: #fff;
+  text-decoration: none;
+  font-weight: normal;
+  padding: 2px 2px 2px 22px;
+  height: 30px;
+}
+
+a.github {
+  background: url('img/github.png') ;
+  background-size: 100%;
+}
+
+
+#page-wrap { 
+    width: 700px; margin: 40px auto 5px; background: #91c7ff; 
+    padding: 50px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ccc));
+	background: -moz-linear-gradient(top,  #eee,  #ccc);
+	-webkit-border-radius: 16px;
+	-moz-border-radius: 16px;
+}
+
+#main-content { padding: 14px; }
