@@ -5,38 +5,83 @@
 <style>
 canvas {
     border:1px solid #d3d3d3;
-    background-color: #fff;
+    background-color: #000;
 }
 </style>
 </head>
-
-<button onclick="startGame()">Start Game</button>
+<div id="myfilter" style="position:absolute;background-color:#000000;opacity:0.3;width:480px;height:270px;display:none"></div>
+<div id="myrestartbutton" style="position:absolute;padding-top:130px;padding-left:220px;display:none;"><button onclick="restartGame(), mySoundBotao.play()">Restart</button></div>
+<div id="canvascontainer"></div>
 			
 			<script>
 
+			var myGameArea;
 			var myGamePiece;
 			var myObstacles = [];
 			var myScore;
+			var mySoundHit;
+			var mySoundJump;
+			var mySoundBotao;
+
+			function restartGame() {
+				document.getElementById("myfilter").style.display = "none";
+				document.getElementById("myrestartbutton").style.display = "none";
+				myGameArea.stop();
+				myGameArea.clear();
+				myGameArea = {};
+				myGamePiece = {};
+				myObstacles = [];
+				myscore = {};
+				document.getElementById("canvascontainer").innerHTML = "";
+				startGame();
+			}
+
+
 
 			function startGame() {
-			    myGamePiece = new component(30, 30, "red", 10, 120);
+				myGameArea = new gamearea();
+			    myGamePiece = new component(30, 30, "yellow", 10, 120);
 			    myGamePiece.gravity = 0.05;
-			    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+			    myScore = new component("30px", "Consolas", "white", 280, 40, "text");
+			    mySoundHit = new sound("sound/NFF-switch-off.wav");
+			    mySoundJump = new sound("sound/NFF-jump.wav");
+			    mySoundBotao = new sound("sound/NFF-home-switch-on.wav");
 			    myGameArea.start();
 			}
 
-			var myGameArea = {
-			    canvas : document.createElement("canvas"),
-			    start : function() {
-			        this.canvas.width = 480;
-			        this.canvas.height = 270;
-			        this.context = this.canvas.getContext("2d");
-			        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-			        this.frameNo = 0;
+			function sound(src) {
+			    this.sound = document.createElement("audio");
+			    this.sound.src = src;
+			    this.sound.setAttribute("preload", "auto");
+			    this.sound.setAttribute("controls", "none");
+			    this.sound.style.display = "none";
+			    document.body.appendChild(this.sound);
+			    this.play = function(){
+			        this.sound.play();
+			    }
+			    this.stop = function(){
+			        this.sound.pause();
+			    }    
+			}
+
+			function gamearea()  {
+			    this.canvas = document.createElement("canvas"),
+			    this.canvas.width = 480;
+			    this.canvas.height = 270;
+			    document.getElementById("canvascontainer").appendChild(this.canvas);
+			    this.context = this.canvas.getContext("2d");
+			    
+			    this.pause = false;
+			    this.frameNo = 0;
+			    this.start = function() {
 			        this.interval = setInterval(updateGameArea, 20);
-			        },
-			    clear : function() {
+			    }
+			    this.clear = function() {
 			        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			    }
+			    this.stop = function() {
+			    	clearInterval(this.interval);
+			    	this.pause = true;
 			    }
 			}
 
@@ -96,30 +141,36 @@ canvas {
 			    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
 			    for (i = 0; i < myObstacles.length; i += 1) {
 			        if (myGamePiece.crashWith(myObstacles[i])) {
+			        	mySoundHit.play();
+			        	myGameArea.stop();
+			        	document.getElementById("myfilter").style.display = "block";
+			        	document.getElementById("myrestartbutton").style.display = "block";
 			            return;
 			        } 
 			    }
-			    myGameArea.clear();
-			    myGameArea.frameNo += 1;
-			    if (myGameArea.frameNo == 1 || everyinterval(150)) {
-			        x = myGameArea.canvas.width;
-			        minHeight = 20;
-			        maxHeight = 200;
-			        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
-			        minGap = 50;
-			        maxGap = 200;
-			        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
-			        myObstacles.push(new component(10, height, "green", x, 0));
-			        myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
-			    }
-			    for (i = 0; i < myObstacles.length; i += 1) {
-			        myObstacles[i].x += -1;
-			        myObstacles[i].update();
-			    }
-			    myScore.text="SCORE: " + myGameArea.frameNo;
-			    myScore.update();
-			    myGamePiece.newPos();
-			    myGamePiece.update();
+			    if (myGameArea.pause == false) {
+				    myGameArea.clear();
+				    myGameArea.frameNo += 1;
+				    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+				        x = myGameArea.canvas.width;
+				        minHeight = 20;
+				        maxHeight = 200;
+				        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+				        minGap = 50;
+				        maxGap = 200;
+				        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+				        myObstacles.push(new component(10, height, "green", x, 0));
+				        myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+				    }
+				    for (i = 0; i < myObstacles.length; i += 1) {
+				        myObstacles[i].x += -1;
+				        myObstacles[i].update();
+				    }
+				    myScore.text="SCORE: " + myGameArea.frameNo;
+				    myScore.update();
+				    myGamePiece.newPos();
+				    myGamePiece.update();
+				}
 			}
 
 			function everyinterval(n) {
@@ -130,6 +181,8 @@ canvas {
 			function accelerate(n) {
 			    myGamePiece.gravity = n;
 			}
+			startGame();
 			</script>
 
-<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)">JUMP</button>
+<button onmousedown="accelerate(-0.6)" onmouseup="accelerate(0.08)" onclick="mySoundJump.play()">JUMP</button>
+<button onclick="restartGame(), mySoundBotao.play()">Restart Game</button>
