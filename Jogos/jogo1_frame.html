@@ -8,9 +8,15 @@ canvas {
     background-color: #000;
 }
 </style>
+<script type="text/javascript" src="../js/jquery-3.2.1.js"></script>
+<script type="text/javascript" src=../js/bootstrap.js></script>
+	<script src="../js/script.js"></script>
+<link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="../style.css" rel="stylesheet" type="text/css">
 </head>
+
 <div id="myfilter" style="position:absolute;background-color:#000000;opacity:0.3;width:480px;height:270px;display:none"></div>
-<div id="myrestartbutton" style="position:absolute;padding-top:130px;padding-left:220px;display:none;"><button onclick="restartGame(), mySoundBotao.play()">Restart</button></div>
+<div id="myrestartbutton" style="position:absolute;padding-top:130px;padding-left:220px;display:none;"><button type="button" class="btn btn-danger" onclick="restartGame(), mySoundBotao.play()">Restart</button></div>
 <div id="canvascontainer"></div>
 			
 			<script>
@@ -210,5 +216,4 @@ canvas {
 			startGame();
 			</script>
 
-<button onmousedown="accelerate(-0.6), myGamePiece.image.src = 'img/Darkmoon.png' " onmouseup="accelerate(0.08), myGamePiece.image.src = 'img/yellowmoon.png'" onclick="mySoundJump.play()">JUMP</button>
-<button onclick="restartGame(), mySoundBotao.play()">Restart Game</button>
+<button type="button" class="btn btn-dark" onmousedown="accelerate(-0.6), myGamePiece.image.src = 'img/Darkmoon.png' " onmouseup="accelerate(0.08), myGamePiece.image.src = 'img/yellowmoon.png'" onclick="mySoundJump.play()" style="margin: 0 0 0 20px;">JUMP</button>
