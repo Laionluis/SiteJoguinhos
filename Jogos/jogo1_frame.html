@@ -22,6 +22,7 @@ canvas {
 			var mySoundHit;
 			var mySoundJump;
 			var mySoundBotao;
+			var myBg;
 
 			function restartGame() {
 				document.getElementById("myfilter").style.display = "none";
@@ -40,11 +41,12 @@ canvas {
 
 			function startGame() {
 				myGameArea = new gamearea();
-			    myGamePiece = new component(30, 30, "yellow", 10, 120);
+			    myGamePiece = new component(30, 30, "img/yellowmoon.png", 10, 120, "image");
+			    myBg = new component(480,270,"img/bg.png",0,0,"background");
 			    myGamePiece.gravity = 0.05;
 			    myScore = new component("30px", "Consolas", "white", 280, 40, "text");
 			    mySoundHit = new sound("sound/NFF-switch-off.wav");
-			    mySoundJump = new sound("sound/NFF-jump.wav");
+			    mySoundJump = new sound("sound/NFF-throw-05.wav");
 			    mySoundBotao = new sound("sound/NFF-home-switch-on.wav");
 			    myGameArea.start();
 			}
@@ -87,6 +89,10 @@ canvas {
 
 			function component(width, height, color, x, y, type) {
 			    this.type = type;
+			    if (type == "image" || type == "background") {
+			        this.image = new Image();
+			        this.image.src = color;
+			    }
 			    this.score = 0;
 			    this.width = width;
 			    this.height = height;
@@ -98,6 +104,18 @@ canvas {
 			    this.gravitySpeed = 0;
 			    this.update = function() {
 			        ctx = myGameArea.context;
+			        if (type == "image" || type == "background") {
+			            ctx.drawImage(this.image, 
+			                this.x, 
+			                this.y,
+			                this.width, this.height);
+			        } else
+			        if (type == "background") {
+			            ctx.drawImage(this.image, 
+			                this.x + this.width, 
+			                this.y,
+			                this.width, this.height);
+			        } else 
 			        if (this.type == "text") {
 			            ctx.font = this.width + " " + this.height;
 			            ctx.fillStyle = color;
@@ -108,6 +126,11 @@ canvas {
 			        }
 			    }
 			    this.newPos = function() {
+			    	 if (this.type == "background") {
+			            if (this.x == -(this.width)) {
+			                this.x = 0;
+			            }
+			        }
 			        this.gravitySpeed += this.gravity;
 			        this.x += this.speedX;
 			        this.y += this.speedY + this.gravitySpeed;
@@ -150,6 +173,8 @@ canvas {
 			    }
 			    if (myGameArea.pause == false) {
 				    myGameArea.clear();
+				    			    myBg.newPos();
+				myBg.update();
 				    myGameArea.frameNo += 1;
 				    if (myGameArea.frameNo == 1 || everyinterval(150)) {
 				        x = myGameArea.canvas.width;
@@ -159,8 +184,8 @@ canvas {
 				        minGap = 50;
 				        maxGap = 200;
 				        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
-				        myObstacles.push(new component(10, height, "green", x, 0));
-				        myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+				        myObstacles.push(new component(10, height, "img/pipe1.png", x, 0 , "image"));
+				        myObstacles.push(new component(10, x - height - gap, "img/pipe.png", x, height + gap,"image"));
 				    }
 				    for (i = 0; i < myObstacles.length; i += 1) {
 				        myObstacles[i].x += -1;
@@ -170,6 +195,7 @@ canvas {
 				    myScore.update();
 				    myGamePiece.newPos();
 				    myGamePiece.update();
+
 				}
 			}
 
@@ -184,5 +210,5 @@ canvas {
 			startGame();
 			</script>
 
-<button onmousedown="accelerate(-0.6)" onmouseup="accelerate(0.08)" onclick="mySoundJump.play()">JUMP</button>
+<button onmousedown="accelerate(-0.6), myGamePiece.image.src = 'img/Darkmoon.png' " onmouseup="accelerate(0.08), myGamePiece.image.src = 'img/yellowmoon.png'" onclick="mySoundJump.play()">JUMP</button>
 <button onclick="restartGame(), mySoundBotao.play()">Restart Game</button>
